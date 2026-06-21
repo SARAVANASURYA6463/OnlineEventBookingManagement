@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EventEase — Guest View</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: #111118;
+      --border: rgba(255,255,255,0.07);
+      --accent: #ff9f43;
+      --text: #f0f0f5;
+      --muted: #7a7a8c;
+      --danger: #ff6584;
+      --success: #3ecfcf;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,159,67,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,159,67,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+    }
+    .blob-1 { width: 400px; height: 400px; background: #ff9f43; top: -100px; right: -100px; }
+    .blob-2 { width: 300px; height: 300px; background: #6c63ff; bottom: -80px; left: -80px; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .navbar-brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .navbar-right { display: flex; align-items: center; gap: 12px; }
+
+    .guest-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(255,159,67,0.12);
+      border: 1px solid rgba(255,159,67,0.25);
+      border-radius: 100px;
+      padding: 5px 14px;
+    }
+
+    .login-btn {
+      background: var(--accent);
+      color: #0a0a0f;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .login-btn:hover {
+      background: #e8892d;
+      transform: translateY(-1px);
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    /* ===== MAIN ===== */
+    .main {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Guest notice banner */
+    .guest-banner {
+      background: rgba(255,159,67,0.08);
+      border: 1px solid rgba(255,159,67,0.2);
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .guest-banner-text {
+      font-size: 0.88rem;
+      color: #ff9f43;
+    }
+
+    .guest-banner-btn {
+      background: var(--accent);
+      color: #0a0a0f;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .guest-banner-btn:hover { background: #e8892d; }
+
+    .page-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+    }
+
+    /* Search */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 28px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 48px 14px 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
+
+    /* Event card */
+    .event-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: border-color 0.2s;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .event-card:hover { border-color: rgba(255,159,67,0.3); }
+
+    .event-info { flex: 1; }
+
+    .event-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .event-meta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .event-meta span {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .seats-badge {
+      display: inline-block;
+      background: rgba(62,207,207,0.1);
+      border: 1px solid rgba(62,207,207,0.2);
+      color: var(--success);
+      border-radius: 8px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .seats-badge.low {
+      background: rgba(255,159,67,0.1);
+      border-color: rgba(255,159,67,0.2);
+      color: var(--accent);
+    }
+
+    .seats-badge.full {
+      background: rgba(255,101,132,0.1);
+      border-color: rgba(255,101,132,0.2);
+      color: var(--danger);
+    }
+
+    /* Book button */
+    .book-btn {
+      background: rgba(255,159,67,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(255,159,67,0.3);
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+
+    .book-btn:hover {
+      background: var(--accent);
+      color: #0a0a0f;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,159,67,0.3);
+    }
+
+    .book-btn:disabled {
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      border-color: var(--border);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Empty / Loading */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
+    .loading { text-align: center; padding: 40px; color: var(--muted); }
+
+    /* Login modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal-box {
+      background: #16161f;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .modal-icon { font-size: 3rem; margin-bottom: 16px; }
+
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .modal-subtitle {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .modal-login-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: #0a0a0f;
+      transition: all 0.25s;
+      margin-bottom: 10px;
+    }
+    .modal-login-btn:hover { background: #e8892d; }
+
+    .modal-register-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      background: transparent;
+      color: var(--text);
+      transition: all 0.25s;
+      margin-bottom: 10px;
+    }
+    .modal-register-btn:hover { background: rgba(255,255,255,0.05); }
+
+    .modal-cancel {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .modal-cancel:hover { color: var(--text); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .event-card { flex-direction: column; align-items: flex-start; }
+      .navbar { padding: 12px 16px; }
+      .main { padding: 24px 16px; }
+      .guest-banner { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">EventEase</div>
+    <div class="navbar-right">
+      <span class="guest-badge">👁️ Guest View</span>
+      <a href="/Frontend/html/userLogIn.html" class="login-btn">Login</a>
+      <a href="/Frontend/Home.html" class="back-btn">← Home</a>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Guest Banner -->
+    <div class="guest-banner">
+      <div class="guest-banner-text">
+        👋 You are browsing as a guest. <strong>Login or register</strong> to book events!
+      </div>
+      <a href="/Frontend/html/userSignIn.html" class="guest-banner-btn">Create Account</a>
+    </div>
+
+    <div class="page-title">Guest Page</div>
+    <div class="page-subtitle">Browse all available events</div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search events by name or location..."/>
+    </div>
+
+    <!-- Events List -->
+    <div id="eventsList">
+      <div class="loading">Loading events...</div>
+    </div>
+
+  </div>
+
+  <!-- Login Required Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-box">
+      <div class="modal-icon">🔐</div>
+      <div class="modal-title">Login Required</div>
+      <div class="modal-subtitle">
+        You need to login or create an account to book events. Join EventEase today!
+      </div>
+      <button class="modal-login-btn" onclick="window.location.href='/Frontend/html/userLogIn.html'">
+        🔑 Login to Book
+      </button>
+      <button class="modal-register-btn" onclick="window.location.href='/Frontend/html/userSignIn.html'">
+        ✨ Create Account
+      </button>
+      <button class="modal-cancel" onclick="document.getElementById('loginModal').classList.remove('show')">
+        Maybe later
+      </button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/guest.js"></script>
+</body>
+</html>

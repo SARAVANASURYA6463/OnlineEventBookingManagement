@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EventEase — Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: #111118;
+      --border: rgba(255,255,255,0.07);
+      --accent: #6c63ff;
+      --accent2: #ff6584;
+      --text: #f0f0f5;
+      --muted: #7a7a8c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background grid pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(108,99,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108,99,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glow blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.25;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--accent); top: -150px; left: -100px; }
+    .blob-2 { width: 400px; height: 400px; background: var(--accent2); bottom: -100px; right: -100px; }
+
+    /* Wrapper */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* Header */
+    .brand {
+      text-align: center;
+      margin-bottom: 56px;
+      animation: fadeDown 0.7s ease both;
+    }
+
+    .brand-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(108,99,255,0.12);
+      border: 1px solid rgba(108,99,255,0.25);
+      border-radius: 100px;
+      padding: 6px 18px;
+      margin-bottom: 20px;
+    }
+
+    .brand h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.1;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-top: 12px;
+      font-weight: 300;
+    }
+
+    /* Cards container */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* Role card */
+    .role-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 24px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .role-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: inherit;
+    }
+
+    .role-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .role-card:hover::before { opacity: 1; }
+
+    /* Individual card accent colors */
+    .card-organizer { --c: #6c63ff; }
+    .card-user      { --c: #3ecfcf; }
+    .card-guest     { --c: #ff9f43; }
+    .card-admin     { --c: #ff6584; }
+
+    .role-card:hover { border-color: var(--c); }
+    .role-card::before { background: radial-gradient(circle at top left, color-mix(in srgb, var(--c) 12%, transparent), transparent 70%); }
+
+    .card-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      background: color-mix(in srgb, var(--c) 15%, transparent);
+      border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+      transition: transform 0.3s;
+    }
+
+    .role-card:hover .card-icon { transform: scale(1.1) rotate(-5deg); }
+
+    .card-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card-arrow {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--c) 15%, transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--c);
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .role-card:hover .card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Staggered animation delays */
+    .role-card:nth-child(1) { animation-delay: 0.1s; }
+    .role-card:nth-child(2) { animation-delay: 0.2s; }
+    .role-card:nth-child(3) { animation-delay: 0.3s; }
+    .role-card:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 48px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      animation: fadeUp 0.6s 0.5s ease both;
+    }
+
+    /* Animations */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="page-wrapper">
+
+    <!-- Brand Header -->
+    <div class="brand">
+      <div class="brand-badge">Welcome</div>
+      <h1>Event Booking</h1>
+      <p>Choose your role to get started</p>
+    </div>
+
+    <!-- Role Cards -->
+    <div class="cards-grid">
+
+      <!-- Organizer -->
+      <a href="organizer.html" class="role-card card-organizer">
+        <div class="card-icon">🎯</div>
+        <div>
+          <div class="card-label">Organizer</div>
+          <div class="card-desc">Create and manage your events</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <!-- User -->
+      <a href="/Frontend/html/user.html" class="role-card card-user">
+        <div class="card-icon">🎟️</div>
+        <div>
+          <div class="card-label">User</div>
+          <div class="card-desc">Browse and book events easily</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <!-- Guest View -->
+      <a href="guest.html" class="role-card card-guest">
+        <div class="card-icon">👁️</div>
+        <div>
+          <div class="card-label">Guest View</div>
+          <div class="card-desc">Explore events without login</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <!-- Admin -->
+      <a href="adminLogIn.html" class="role-card card-admin">
+        <div class="card-icon">⚙️</div>
+        <div>
+          <div class="card-label">Admin</div>
+          <div class="card-desc">Manage users and platform</div>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      EventBooking &copy; 2026 — All rights reserved
+    </div>
+
+  </div>
+
+  <!-- Bootstrap JS (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Your own JS -->
+   <script src="../js/api.js"></script>
+  <script src="../js/home.js"></script>
+</body>
+</html>

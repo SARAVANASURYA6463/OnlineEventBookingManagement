@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EventEase — Organizer Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#0a0a0f; --card-bg:#111118;
+      --border:rgba(255,255,255,0.07); --accent:#6c63ff;
+      --text:#f0f0f5; --muted:#7a7a8c;
+      --danger:#ff6584; --success:#3ecfcf; --warning:#ff9f43;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+    body::before{content:'';position:fixed;inset:0;
+      background-image:linear-gradient(rgba(108,99,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,0.03) 1px,transparent 1px);
+      background-size:60px 60px;pointer-events:none;z-index:0;}
+
+    /* NAVBAR */
+    .navbar{position:sticky;top:0;z-index:100;background:rgba(10,10,15,0.92);backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;}
+    .navbar-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;
+      background:linear-gradient(135deg,#fff 30%,var(--accent) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .navbar-right{display:flex;align-items:center;gap:14px;}
+    .avatar{width:40px;height:40px;border-radius:50%;background:rgba(108,99,255,0.2);
+      border:1px solid rgba(108,99,255,0.4);display:flex;align-items:center;justify-content:center;
+      font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--accent);}
+    .organizer-name{font-size:0.9rem;font-weight:500;}
+    .organizer-role{font-size:0.72rem;color:var(--muted);}
+    .logout-btn{background:rgba(255,101,132,0.1);border:1px solid rgba(255,101,132,0.25);
+      color:var(--danger);border-radius:10px;padding:8px 16px;font-size:0.82rem;cursor:pointer;transition:all .2s;}
+    .logout-btn:hover{background:rgba(255,101,132,0.2);}
+
+    /* MAIN */
+    .main{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:36px 24px;}
+    .page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;margin-bottom:4px;}
+    .page-subtitle{color:var(--muted);font-size:0.88rem;margin-bottom:28px;}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+    .stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
+    .stat-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+    .stat-value{font-family:'Syne',sans-serif;font-weight:700;font-size:1.6rem;color:var(--accent);}
+
+    /* SECTION */
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;}
+    .add-btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:10px 20px;
+      font-family:'Syne',sans-serif;font-weight:700;font-size:0.88rem;cursor:pointer;transition:all .25s;}
+    .add-btn:hover{background:#5a52e0;transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,99,255,.35);}
+
+    /* EVENT CARD */
+    .event-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;
+      padding:20px 24px;margin-bottom:12px;transition:border-color .2s;animation:fadeUp .4s ease both;}
+    .event-card:hover{border-color:rgba(108,99,255,.3);}
+    .event-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;}
+    .event-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;}
+    .event-meta{display:flex;gap:12px;flex-wrap:wrap;}
+    .event-meta span{font-size:.76rem;color:var(--muted);}
+
+    /* TYPE BADGE */
+    .type-badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.7rem;font-weight:600;font-family:'Syne',sans-serif;}
+    .type-Workshop{background:rgba(108,99,255,.15);color:#a89cff;border:1px solid rgba(108,99,255,.25);}
+    .type-Hackathon{background:rgba(255,101,132,.15);color:#ff8fa3;border:1px solid rgba(255,101,132,.25);}
+    .type-Conference{background:rgba(62,207,207,.15);color:#3ecfcf;border:1px solid rgba(62,207,207,.25);}
+    .type-Seminar{background:rgba(255,159,67,.15);color:#ff9f43;border:1px solid rgba(255,159,67,.25);}
+    .type-Concert{background:rgba(255,200,67,.15);color:#ffc843;border:1px solid rgba(255,200,67,.25);}
+    .type-Sports{background:rgba(50,200,100,.15);color:#32c864;border:1px solid rgba(50,200,100,.25);}
+    .type-General{background:rgba(150,150,150,.15);color:#aaa;border:1px solid rgba(150,150,150,.25);}
+    .type-Research{background:rgba(150,100,255,.15);color:#c396ff;border:1px solid rgba(150,100,255,.25);}
+    .type-Networking{background:rgba(67,190,255,.15);color:#43beff;border:1px solid rgba(67,190,255,.25);}
+    .type-Exhibition{background:rgba(255,130,80,.15);color:#ff8250;border:1px solid rgba(255,130,80,.25);}
+
+    /* MODE BADGE */
+    .mode-badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:.7rem;font-weight:600;font-family:'Syne',sans-serif;}
+    .mode-Solo{background:rgba(62,207,207,.12);color:#3ecfcf;border:1px solid rgba(62,207,207,.25);}
+    .mode-Team{background:rgba(255,159,67,.12);color:#ff9f43;border:1px solid rgba(255,159,67,.25);}
+
+    /* SEAT PROGRESS */
+    .seat-section{margin-top:12px;}
+    .seat-labels{display:flex;justify-content:space-between;margin-bottom:6px;}
+    .seat-label{font-size:.75rem;color:var(--muted);}
+    .progress-bar-wrap{width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:10px;overflow:hidden;}
+    .progress-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--danger));transition:width .5s ease;}
+    .seat-counts{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;}
+    .seat-count-item{font-size:.76rem;display:flex;align-items:center;gap:5px;}
+    .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+    .dot-filled{background:var(--danger);} .dot-empty{background:var(--success);} .dot-max{background:var(--warning);}
+
+    /* ACTIONS */
+    .event-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+    .edit-btn{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.25);color:var(--accent);
+      border-radius:10px;padding:8px 14px;font-size:.82rem;cursor:pointer;transition:all .2s;}
+    .edit-btn:hover{background:rgba(108,99,255,.2);}
+    .delete-btn{background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.25);color:var(--danger);
+      border-radius:10px;padding:8px 14px;font-size:.82rem;cursor:pointer;transition:all .2s;}
+    .delete-btn:hover{background:rgba(255,101,132,.2);}
+    .view-btn{background:rgba(62,207,207,.1);border:1px solid rgba(62,207,207,.25);color:var(--success);
+      border-radius:10px;padding:8px 14px;font-size:.82rem;cursor:pointer;transition:all .2s;}
+    .view-btn:hover{background:rgba(62,207,207,.2);}
+
+    /* EMPTY / LOADING */
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-state .icon{font-size:3rem;margin-bottom:16px;}
+    .loading{text-align:center;padding:40px;color:var(--muted);}
+
+    /* ALERTS */
+    .alert-box{padding:12px 16px;border-radius:12px;font-size:.85rem;margin-bottom:20px;display:none;}
+    .alert-error{background:rgba(255,101,132,.12);border:1px solid rgba(255,101,132,.3);color:var(--danger);}
+    .alert-success{background:rgba(62,207,207,.12);border:1px solid rgba(62,207,207,.3);color:var(--success);}
+    .alert-box.show{display:block;}
+
+    /* MODAL BASE */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);
+      z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+    .modal-overlay.show{display:flex;}
+    .modal-box{background:#16161f;border:1px solid var(--border);border-radius:24px;padding:32px;
+      width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:fadeUp .3s ease both;}
+
+    .modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;margin-bottom:20px;}
+
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;font-size:.76rem;font-weight:500;color:var(--muted);
+      margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+    .form-group input,.form-group select,.form-group textarea{
+      width:100%;padding:11px 13px;background:rgba(255,255,255,.04);
+      border:1px solid var(--border);border-radius:10px;color:var(--text);
+      font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s;resize:none;}
+    .form-group select option{background:#16161f;}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:var(--muted);}
+
+    /* Team size toggle */
+    #teamSizeGroup{display:none;}
+    #teamSizeGroup.show{display:block;}
+
+    .modal-error{padding:10px 14px;border-radius:10px;font-size:.82rem;margin-bottom:14px;display:none;
+      background:rgba(255,101,132,.12);border:1px solid rgba(255,101,132,.3);color:var(--danger);}
+    .modal-error.show{display:block;}
+
+    .modal-actions{display:flex;gap:12px;margin-top:20px;}
+    .modal-submit{flex:1;padding:13px;border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;
+      font-size:.95rem;border:none;cursor:pointer;background:var(--accent);color:#fff;transition:all .25s;}
+    .modal-submit:hover{background:#5a52e0;}
+    .modal-submit:disabled{opacity:.6;cursor:not-allowed;}
+    .modal-cancel{flex:1;padding:13px;border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;
+      font-size:.95rem;border:1px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);transition:all .25s;}
+    .modal-cancel:hover{background:rgba(255,255,255,.05);color:var(--text);}
+
+    /* REGISTRATIONS MODAL */
+    .reg-modal-box{background:#16161f;border:1px solid var(--border);border-radius:24px;padding:32px;
+      width:100%;max-width:700px;max-height:90vh;overflow-y:auto;animation:fadeUp .3s ease both;}
+    .reg-table{width:100%;border-collapse:collapse;margin-top:16px;}
+    .reg-table th{font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
+      padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;font-weight:500;}
+    .reg-table td{font-size:.84rem;padding:12px 12px;border-bottom:1px solid var(--border);color:var(--text);}
+    .reg-table tr:last-child td{border-bottom:none;}
+    .reg-table tr:hover td{background:rgba(255,255,255,.02);}
+    .reg-count{background:rgba(62,207,207,.1);border:1px solid rgba(62,207,207,.2);
+      color:var(--success);border-radius:8px;padding:3px 10px;font-size:.72rem;font-weight:600;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    @media(max-width:700px){
+      .stats-row{grid-template-columns:repeat(2,1fr);}
+      .form-row{grid-template-columns:1fr;}
+      .event-top{flex-direction:column;}
+      .navbar{padding:12px 16px;}
+      .main{padding:20px 14px;}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-brand">EventEase</div>
+  <div class="navbar-right">
+    <div>
+      <div class="organizer-name" id="organizerName">Loading...</div>
+      <div class="organizer-role">Organizer</div>
+    </div>
+    <div class="avatar" id="organizerAvatar">?</div>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="alert-box alert-error"   id="errorMsg"></div>
+  <div class="alert-box alert-success" id="successMsg"></div>
+
+  <div class="page-title">Organizer Dashboard</div>
+  <div class="page-subtitle">Manage your events and track bookings</div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Total Events</div><div class="stat-value" id="totalEvents">0</div></div>
+    <div class="stat-card"><div class="stat-label">Total Seats</div><div class="stat-value" id="totalSeats">0</div></div>
+    <div class="stat-card"><div class="stat-label">Booked Seats</div><div class="stat-value" style="color:var(--danger)" id="totalFilled">0</div></div>
+    <div class="stat-card"><div class="stat-label">Available Seats</div><div class="stat-value" style="color:var(--success)" id="totalEmpty">0</div></div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">My Events</div>
+    <button class="add-btn" id="addEventBtn">+ Add Event</button>
+  </div>
+
+  <div id="eventsList"><div class="loading">Loading events...</div></div>
+</div>
+
+<!-- ===== ADD / EDIT EVENT MODAL ===== -->
+<div class="modal-overlay" id="eventModal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">Add New Event</div>
+    <div class="modal-error" id="modalError"></div>
+    <input type="hidden" id="editEventId"/>
+
+    <div class="form-group">
+      <label>Event Name *</label>
+      <input type="text" id="eventName" placeholder="Enter event name"/>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Event Type *</label>
+        <select id="eventType">
+          <option value="">-- Select Type --</option>
+          <option value="Workshop">🔧 Workshop</option>
+          <option value="Hackathon">💻 Hackathon</option>
+          <option value="Conference">🎤 Conference</option>
+          <option value="Seminar">📚 Seminar</option>
+          <option value="Research">🔬 Research</option>
+          <option value="Networking">🤝 Networking</option>
+          <option value="Concert">🎵 Concert</option>
+          <option value="Sports">⚽ Sports</option>
+          <option value="Exhibition">🎨 Exhibition</option>
+          <option value="General">📋 General</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Event Mode *</label>
+        <select id="eventMode">
+          <option value="">-- Select Mode --</option>
+          <option value="Solo">👤 Solo</option>
+          <option value="Team">👥 Team</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Team size — shown only when Team is selected -->
+    <div class="form-group" id="teamSizeGroup">
+      <label>Team Size (members per team) *</label>
+      <input type="number" id="teamSize" placeholder="e.g. 4" min="2"/>
+    </div>
+
+    <div class="form-group">
+      <label>Location *</label>
+      <input type="text" id="eventLocation" placeholder="Enter location"/>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Event Date *</label>
+        <input type="date" id="eventDate"/>
+      </div>
+      <div class="form-group">
+        <label>Event Time *</label>
+        <input type="time" id="eventTime"/>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Total Seats *</label>
+        <input type="number" id="eventSeats" placeholder="e.g. 100" min="1"/>
+      </div>
+      <div class="form-group">
+        <label>Max Tickets / User *</label>
+        <input type="number" id="maxTickets" placeholder="e.g. 2" min="1" value="1"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Description (optional)</label>
+      <textarea id="eventDescription" rows="3" placeholder="Short description of the event"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modalCancelBtn">Cancel</button>
+      <button class="modal-submit" id="modalSubmitBtn">Add Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REGISTRATIONS MODAL ===== -->
+<div class="modal-overlay" id="regModal">
+  <div class="reg-modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div>
+        <div class="modal-title" style="margin-bottom:4px;" id="regModalTitle">Registrations</div>
+        <div style="font-size:.82rem;color:var(--muted);" id="regModalSubtitle"></div>
+      </div>
+      <button onclick="closeRegModal()" style="background:rgba(255,255,255,.05);border:1px solid var(--border);
+        color:var(--muted);border-radius:10px;padding:8px 16px;cursor:pointer;font-size:.82rem;">✕ Close</button>
+    </div>
+
+    <div id="regContent"><div class="loading">Loading registrations...</div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/organizerDashBoard.js"></script>
+</body>
+</html>
