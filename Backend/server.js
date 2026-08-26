@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const cors    = require("cors");
 const express = require("express");
 const mysql   = require("mysql2");
@@ -7,7 +9,7 @@ const session = require("express-session");
 const app = express();
 
 app.use(cors({
-  origin: "http://127.0.0.1:5500",
+  origin: process.env.FRONTEND_URL || "http://127.0.0.1:5500", // 👈 set FRONTEND_URL on Render to your Netlify URL
   credentials: true,
   methods: ["GET","POST","PUT","DELETE","OPTIONS"],
   allowedHeaders: ["Content-Type"]
@@ -16,14 +18,22 @@ app.use(cors({
 app.use(express.json());
 
 app.use(session({
-  secret: "eventease_secret_key",
+  secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
-  cookie: { maxAge: 1000*60*60*24, httpOnly: false, sameSite: "lax", secure: false }
+  cookie: {
+    maxAge: 1000*60*60*24,
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production"
+  }
 }));
 
 const db = mysql.createConnection({
-  host:"localhost", user:"root", password:"6463", database:"eventdb"
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
 db.connect(err => {
@@ -658,4 +668,4 @@ app.get("/admin/reports/export", adminAuth, (req, res) => {
   );
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(process.env.PORT || 5000, () => console.log("Server running on port " + (process.env.PORT || 5000)));

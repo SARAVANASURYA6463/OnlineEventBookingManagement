@@ -1,6 +1,10 @@
 // ================= dashboard.js =================
 // Organizer Dashboard — complete rewrite
 
+const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ? "http://localhost:5000"
+  : "https://YOUR-BACKEND-APP.onrender.com"; // 👈 replace with your real Render backend URL after deploying it
+
 let currentOrganizer = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -47,7 +51,7 @@ async function loadEvents() {
   try {
     // ✅ Direct fetch — no wrapper function to avoid any issue
     const response = await fetch(
-      `http://localhost:5000/events?organizer_id=${currentOrganizer.id}`,
+      `${API_BASE}/events?organizer_id=${currentOrganizer.id}`,
       { credentials: "include" }
     );
 
@@ -265,8 +269,8 @@ function setupModal() {
     try {
       // ✅ Direct fetch to avoid any wrapper issues
       const url    = editId
-        ? `http://localhost:5000/events/${editId}`
-        : `http://localhost:5000/events`;
+        ? `${API_BASE}/events/${editId}`
+        : `${API_BASE}/events`;
       const method = editId ? "PUT" : "POST";
 
       const res  = await fetch(url, {
@@ -348,7 +352,7 @@ async function viewRegistrations(eventId, eventName) {
 
   try {
     const res  = await fetch(
-      `http://localhost:5000/events/${eventId}/registrations?organizer_id=${currentOrganizer.id}`,
+      `${API_BASE}/events/${eventId}/registrations?organizer_id=${currentOrganizer.id}`,
       { credentials: "include" }
     );
     const data = await res.json();
@@ -418,7 +422,7 @@ async function deleteEventById(id) {
 
   try {
     const res  = await fetch(
-      `http://localhost:5000/events/${id}?organizer_id=${currentOrganizer.id}`,
+      `${API_BASE}/events/${id}?organizer_id=${currentOrganizer.id}`,
       { method: "DELETE", credentials: "include" }
     );
     const data = await res.json();
