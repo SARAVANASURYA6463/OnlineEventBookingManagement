@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
     ? "http://localhost:5000"
-    : "https://YOUR-BACKEND-APP.onrender.com"; // 👈 replace with your real Render backend URL after deploying it
+    : "https://onlineeventbookingmanagement.onrender.com"; // 👈 replace with your real Render backend URL after deploying it
 
   loginBtn.addEventListener("click", async () => {
     const id  = adminId.value.trim();
