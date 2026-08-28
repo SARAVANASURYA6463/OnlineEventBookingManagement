@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   showSuccess("✅ Login successful! Redirecting...");
   setTimeout(() => {
-    window.location.href = "/Frontend/html/userDashboard.html";
+    window.location.href = "/html/userDashboard.html";
   }, 1000);
 }
 

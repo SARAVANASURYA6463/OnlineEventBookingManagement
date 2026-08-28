@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showSuccess("✅ Login successful! Redirecting...");
         sessionStorage.setItem("admin", JSON.stringify(data.admin));
         setTimeout(() => {
-          window.location.href = "/Frontend/html/adminDashBoard.html";
+          window.location.href = "/html/adminDashBoard.html";
         }, 800);
       } else {
         showError("❌ " + (data.message || "Invalid credentials."));

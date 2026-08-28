@@ -30,10 +30,10 @@ async function checkAuth() {
       document.getElementById("userId").textContent     = "ID: " + currentUser.id;
       document.getElementById("userAvatar").textContent = currentUser.name.charAt(0).toUpperCase();
     } else {
-      window.location.href = "/Frontend/html/userLogIn.html";
+      window.location.href = "/html/userLogIn.html";
     }
   } catch (err) {
-    window.location.href = "/Frontend/html/userLogIn.html";
+    window.location.href = "/html/userLogIn.html";
   }
 }
 
@@ -114,7 +114,7 @@ function goToConfirmation(id, name, event_date, event_time, location, available,
   sessionStorage.setItem("selectedEvent", JSON.stringify({
     id, name, event_date, event_time, location, available, maxTickets, qty
   }));
-  window.location.href = "/Frontend/html/bookingConfirmation.html";
+  window.location.href = "/html/bookingConfirmation.html";
 }
 
 // ================= SEARCH =================
@@ -163,6 +163,6 @@ function setupLogout() {
     try { await logoutUser(); } catch (err) {}
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("selectedEvent");
-    window.location.href = "/Frontend/html/userLogIn.html";
+    window.location.href = "/html/userLogIn.html";
   });
 }

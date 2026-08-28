@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showSuccess("✅ Account created! Redirecting to login...");
 
     setTimeout(() => {
-      window.location.href = "/Frontend/html/organizerLogIn.html";
+      window.location.href = "/html/organizerLogIn.html";
     }, 1500);
 
   } else if (data.error === "Email already registered") {

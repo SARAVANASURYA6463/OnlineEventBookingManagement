@@ -9,13 +9,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // ================= LOGIN BUTTON =================
   loginBtn.addEventListener("click", () => {
     // ✅ redirect to user login page
-    window.location.href = "/Frontend/html/userLogin.html";
+    window.location.href = "/html/userLogin.html";
   });
 
   // ================= SIGN IN BUTTON =================
   signinBtn.addEventListener("click", () => {
     // ✅ redirect to user register page
-    window.location.href = "/Frontend/html/userSignIn.html";
+    window.location.href = "/html/userSignIn.html";
   });
 
 });

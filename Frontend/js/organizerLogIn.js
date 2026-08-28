@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.setItem("organizer", JSON.stringify(data.user));
 
         setTimeout(() => {
-          window.location.href = "/Frontend/html/OrganizerDashBoard.html";
+          window.location.href = "/html/OrganizerDashBoard.html";
         }, 1000);
 
       } else {

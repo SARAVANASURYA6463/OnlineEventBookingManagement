@@ -10,14 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Login button → go to Organizer Login Page (Screen 4)
   if (loginBtn) {
     loginBtn.addEventListener("click", () => {
-      window.location.href = "/Frontend/html/organizerLogIn.html";
+      window.location.href = "/html/organizerLogIn.html";
     });
   }
 
   // SignIn button → go to Organizer SignIn Page (Screen 5)
   if (signinBtn) {
     signinBtn.addEventListener("click", () => {
-window.location.href = "/Frontend/html/organizerSignIn.html";
+window.location.href = "/html/organizerSignIn.html";
     });
   }
 

@@ -9,7 +9,7 @@ let typeChart    = null;
 document.addEventListener("DOMContentLoaded", async () => {
   // Auth check
   const stored = sessionStorage.getItem("admin");
-  if (!stored) { window.location.href = "/Frontend/html/adminLogin.html"; return; }
+  if (!stored) { window.location.href = "/html/adminLogin.html"; return; }
   currentAdmin = JSON.parse(stored);
 
   document.getElementById("adminName").textContent   = currentAdmin.name || "Admin";
@@ -447,5 +447,5 @@ async function exportCSV() {
 async function adminLogout() {
   try { await fetch(`${API}/logout`, { method: "POST", credentials: "include" }); } catch {}
   sessionStorage.removeItem("admin");
-  window.location.href = "/Frontend/html/adminLogIn.html";
+  window.location.href = "/html/adminLogIn.html";
 }

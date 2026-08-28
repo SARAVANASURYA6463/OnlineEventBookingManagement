@@ -20,7 +20,7 @@ async function checkAuth() {
       if (data.loggedIn && data.user.role === "user") {
         currentUser = data.user;
       } else {
-        window.location.href = "/Frontend/html/userLogIn.html";
+        window.location.href = "/html/userLogIn.html";
         return;
       }
     }
@@ -32,14 +32,14 @@ async function checkAuth() {
     document.getElementById("attendeeName").value  = currentUser.name  || "";
 
   } catch (err) {
-    window.location.href = "/Frontend/html/userLogIn.html";
+    window.location.href = "/html/userLogIn.html";
   }
 }
 
 // ================= LOAD EVENT DETAILS =================
 function loadEventDetails() {
   const stored = sessionStorage.getItem("selectedEvent");
-  if (!stored) { window.location.href = "/Frontend/html/userDashboard.html"; return; }
+  if (!stored) { window.location.href = "/html/userDashboard.html"; return; }
 
   selectedEvent = JSON.parse(stored);
 
@@ -117,7 +117,7 @@ function setupConfirmBtn() {
         }));
 
         sessionStorage.removeItem("selectedEvent");
-        window.location.href = "/Frontend/html/ticket.html";
+        window.location.href = "/html/ticket.html";
 
       } else {
         errorMsg.textContent = "❌ " + (data.error || "Booking failed.");

@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadTicket() {
   const stored = sessionStorage.getItem("ticket");
   if (!stored) {
-    window.location.href = "/Frontend/html/userDashboard.html";
+    window.location.href = "/html/userDashboard.html";
     return;
   }
 

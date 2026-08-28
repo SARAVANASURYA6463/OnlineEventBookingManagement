@@ -31,10 +31,10 @@ async function checkAuth() {
       sessionStorage.setItem("organizer", JSON.stringify(data.user));
       setNavbar();
     } else {
-      window.location.href = "/Frontend/html/organizerLogIn.html";
+      window.location.href = "/html/organizerLogIn.html";
     }
   } catch {
-    window.location.href = "/Frontend/html/organizerLogIn.html";
+    window.location.href = "/html/organizerLogIn.html";
   }
 }
 
@@ -443,6 +443,6 @@ function setupLogout() {
   document.getElementById("logoutBtn").addEventListener("click", async () => {
     try { await logoutUser(); } catch {}
     sessionStorage.removeItem("organizer");
-    window.location.href = "/Frontend/html/organizerLogIn.html";
+    window.location.href = "/html/organizerLogIn.html";
   });
 }

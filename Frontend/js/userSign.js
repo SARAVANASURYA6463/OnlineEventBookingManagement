@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Redirect to login page
         setTimeout(() => {
-          window.location.href = "/Frontend/html/userLogIn.html";
+          window.location.href = "/html/userLogIn.html";
         }, 1500);
 
       } else if (data.error === "Email already registered") {
